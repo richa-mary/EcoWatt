@@ -1,0 +1,39 @@
+<section class="wrap">
+  <h1>Your Personalised Tariff Options</h1>
+  <p class="sub">Based on your estimated usage (we’ll capture this next).</p>
+
+  <div class="grid" *ngIf="!loading && !error">
+    <div class="card" *ngFor="let t of tariffs; let i = index" [class.best]="i === 1">
+      <div class="badge" *ngIf="i === 1">★ Best Value</div>
+
+      <div class="icon">{{ i === 0 ? '📅' : (i === 1 ? '🛡️' : '📈') }}</div>
+
+      <h2>{{ t.name }}</h2>
+      <p class="term">{{ i === 0 ? '12 months' : (i === 1 ? '24 months' : 'Rolling monthly') }}</p>
+
+      <div class="price">
+        <div class="amount">£—</div>
+        <div class="per">per month</div>
+      </div>
+
+      <div class="meta">
+        <div><span>Elec unit:</span><b>{{ t.elecUnitRate }}</b></div>
+        <div><span>Elec standing:</span><b>{{ t.elecStandingCharge }}</b></div>
+        <div><span>Gas unit:</span><b>{{ t.gasUnitRate }}</b></div>
+        <div><span>Gas standing:</span><b>{{ t.gasStandingCharge }}</b></div>
+      </div>
+
+      <ul class="ticks">
+        <li>Transparent pricing</li>
+        <li>No exit fees</li>
+        <li>Renewable options</li>
+        <li>Great support</li>
+      </ul>
+
+      <button class="select" (click)="selectTariff(t)">Select {{ t.name }}</button>
+    </div>
+  </div>
+
+  <p *ngIf="loading">Loading…</p>
+  <p *ngIf="error">{{ error }}</p>
+</section>

@@ -1,0 +1,7 @@
+.topbar { display:flex; justify-content:space-between; align-items:center; padding:14px 22px; border-bottom:1px solid #e5e7eb; background:#fff; position:sticky; top:0; }
+.brand { font-weight:800; }
+.nav { display:flex; gap:14px; align-items:center; }
+.nav a { text-decoration:none; color:#0f172a; opacity:.85; }
+.cta { background:#16a34a; color:#fff !important; padding:10px 14px; border-radius:10px; font-weight:700; opacity:1 !important; }
+.page { padding: 24px; }
+.footer { text-align:center; padding:14px 22px; border-top:1px solid #e5e7eb; background:#f9fafb; font-size:14px; color:#6b7280; }
