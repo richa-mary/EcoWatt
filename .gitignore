@@ -1,0 +1,15 @@
+# Node
+node_modules/
+
+# .NET
+bin/
+obj/
+
+# Flutter
+.dart_tool/
+build/
+
+# VS
+.vs/
+*.user
+*.log
