@@ -46,9 +46,14 @@ export class DashboardPage implements OnInit {
     const id = this.auth.getCustomerId();
     if (!id) { this.router.navigate(['/login']); return; }
 
+    // Safety timeout — show content after 5 s even if API is slow
+    const loadTimeout = setTimeout(() => {
+      if (this.loadingCustomer) { this.loadingCustomer = false; }
+    }, 5000);
+
     this.customerApi.getById(id).subscribe({
-      next: c => { this.customer = c; this.loadingCustomer = false; },
-      error: () => { this.loadingCustomer = false; }
+      next: c => { clearTimeout(loadTimeout); this.customer = c; this.loadingCustomer = false; },
+      error: () => { clearTimeout(loadTimeout); this.loadingCustomer = false; }
     });
 
     this.loadUsage(id);
@@ -139,5 +144,33 @@ export class DashboardPage implements OnInit {
     if (s === 'Paid') return 'paid';
     if (s === 'Overdue') return 'overdue';
     return 'unpaid';
+  }
+
+  get suggestions(): { icon: string; text: string; type: 'tip' | 'warning' | 'success' }[] {
+    const tips: { icon: string; text: string; type: 'tip' | 'warning' | 'success' }[] = [];
+    const tariffName = (this.customer?.tariff?.name ?? '').toLowerCase();
+
+    if (tariffName.includes('variable')) {
+      tips.push({ icon: '🔒', text: 'You are on a variable tariff — switch to a Fixed plan to protect against price rises.', type: 'tip' });
+    }
+    if (this.unpaidCount > 0) {
+      tips.push({ icon: '⚠️', text: `You have ${this.unpaidCount} unpaid bill${this.unpaidCount > 1 ? 's' : ''}. Settle them to avoid late-payment charges.`, type: 'warning' });
+    }
+    if (this.latestElec > 500) {
+      tips.push({ icon: '💡', text: 'Your electricity usage is above average. Switching to LED lighting and A-rated appliances could cut your bill by up to 20%.', type: 'tip' });
+    }
+    if (this.latestGas > 300) {
+      tips.push({ icon: '🏠', text: 'High gas consumption detected. Improving loft and wall insulation is one of the most cost-effective ways to reduce heating bills.', type: 'tip' });
+    }
+    if (this.usageRecords.length < 3) {
+      tips.push({ icon: '📊', text: 'Add regular meter readings so we can give you accurate bill estimates and personalised saving tips.', type: 'tip' });
+    }
+    if (tariffName.includes('green') || tariffName.includes('eco')) {
+      tips.push({ icon: '🌿', text: 'You are on a green energy tariff — great choice for the planet! Share with friends to earn referral credit.', type: 'success' });
+    }
+    if (!tips.length) {
+      tips.push({ icon: '✅', text: 'Your account looks great! Keep logging readings to stay on top of your energy use.', type: 'success' });
+    }
+    return tips;
   }
 }

@@ -78,6 +78,18 @@
         <div class="detail-row"><span>Address</span><b>{{ customer?.address || '—' }}</b></div>
         <div class="detail-row"><span>Postcode</span><b>{{ customer?.postcode }}</b></div>
       </div>
+
+      <!-- Suggestions panel -->
+      <div class="suggestions-panel">
+        <h3 class="suggestions-title">💡 Suggestions for You</h3>
+        <ul class="suggestions-list">
+          <li *ngFor="let s of suggestions" [class]="'suggestion-item suggestion-' + s.type">
+            <span class="s-icon">{{ s.icon }}</span>
+            <span class="s-text">{{ s.text }}</span>
+          </li>
+        </ul>
+      </div>
+
       </ng-container>
     </div>
 

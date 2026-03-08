@@ -329,3 +329,57 @@ tr:hover td { background: #f9fafb; }
   font-size: 18px;
   color: #64748b;
 }
+
+// ===== SUGGESTIONS PANEL =====
+.suggestions-panel {
+  margin-top: 28px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px 28px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.06);
+}
+
+.suggestions-title {
+  margin: 0 0 16px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.suggestions-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.suggestion-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  font-size: 14px;
+  line-height: 1.5;
+
+  &.suggestion-tip {
+    background: #eff6ff;
+    border-left: 4px solid #3b82f6;
+    color: #1e40af;
+  }
+  &.suggestion-warning {
+    background: #fff7ed;
+    border-left: 4px solid #f97316;
+    color: #9a3412;
+  }
+  &.suggestion-success {
+    background: #f0fdf4;
+    border-left: 4px solid #22c55e;
+    color: #166534;
+  }
+
+  .s-icon { font-size: 18px; flex-shrink: 0; }
+  .s-text { flex: 1; }
+}
