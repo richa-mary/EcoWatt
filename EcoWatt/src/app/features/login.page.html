@@ -1,24 +1,29 @@
-<div class="topbar">
-  <a routerLink="/quote" class="back">← Back to Home</a>
+﻿<div class="topbar">
+  <a routerLink="/quote" class="back">Back to Home</a>
 </div>
 
 <section class="wrap">
   <div class="card">
+    <div class="logo">EcoWatt</div>
     <h1>Welcome back</h1>
-    <p class="sub">
-      Log in to access your energy dashboard, usage, and billing information.
-    </p>
+    <p class="sub">Log in to access your energy dashboard, usage, and billing information.</p>
+
+    <div class="error-msg" *ngIf="error">{{ error }}</div>
 
     <label>Email address</label>
-    <input type="email" placeholder="name@email.com" />
+    <input type="email" [(ngModel)]="email" placeholder="name@email.com"
+      (keydown.enter)="login()" [disabled]="loading" />
 
     <label>Password</label>
-    <input type="password" placeholder="Enter your password" />
+    <input type="password" [(ngModel)]="password" placeholder="Enter your password"
+      (keydown.enter)="login()" [disabled]="loading" />
 
-    <button>Log in</button>
+    <button (click)="login()" [disabled]="loading">
+      {{ loading ? "Logging in..." : "Log in" }}
+    </button>
 
     <p class="bottom">
-      Don’t have an account?
+      Don't have an account?
       <a routerLink="/register">Create one</a>
     </p>
   </div>

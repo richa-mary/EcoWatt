@@ -1,11 +1,22 @@
 <header class="topbar">
-  <div class="brand">⚡ EcoWatt Energy</div>
+  <div class="brand">
+    <a routerLink="/quote">⚡ EcoWatt Energy</a>
+  </div>
   <nav class="nav">
-    <a routerLink="/login">Login</a>
-    <a class="cta" routerLink="/quote">Get Quote</a>
+    <a routerLink="/quote">Home</a>
+    <a routerLink="/tariffs">Tariffs</a>
+    <ng-container *ngIf="auth.isLoggedIn(); else loggedOut">
+      <a routerLink="/dashboard">Dashboard</a>
+      <button class="cta" (click)="auth.logout()">Log out</button>
+    </ng-container>
+    <ng-template #loggedOut>
+      <a routerLink="/login">Login</a>
+      <a class="cta" routerLink="/register">Get Started</a>
+    </ng-template>
   </nav>
 </header>
 
 <main class="page">
   <router-outlet></router-outlet>
 </main>
+

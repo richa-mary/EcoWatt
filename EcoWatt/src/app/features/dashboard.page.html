@@ -1,0 +1,211 @@
+<header class="dash-header">
+  <div class="brand">EcoWatt Energy</div>
+  <div class="header-right">
+    <span class="welcome">Hello, {{ user()?.firstName }}</span>
+    <button class="logout-btn" (click)="logout()">Log out</button>
+  </div>
+</header>
+
+<div class="dash-layout">
+
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <button [class.active]="activeTab === 'overview'" (click)="setTab('overview')">
+      Dashboard
+    </button>
+    <button [class.active]="activeTab === 'usage'" (click)="setTab('usage')">
+      Usage
+    </button>
+    <button [class.active]="activeTab === 'billing'" (click)="setTab('billing')">
+      Billing
+    </button>
+    <button [class.active]="activeTab === 'tariff'" (click)="setTab('tariff')">
+      My Tariff
+    </button>
+  </nav>
+
+  <!-- Main content -->
+  <main class="main">
+
+    <!-- OVERVIEW TAB -->
+    <div *ngIf="activeTab === 'overview'">
+
+      <!-- Skeleton while customer loads -->
+      <ng-container *ngIf="loadingCustomer">
+        <div class="skeleton-title"></div>
+        <div class="skeleton-sub"></div>
+        <div class="kpi-grid">
+          <div class="kpi skeleton-kpi" *ngFor="let i of [1,2,3,4,5,6]"></div>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="!loadingCustomer">
+      <h1>Welcome back, {{ customer?.firstName ?? user()?.firstName }}!</h1>
+      <p class="page-sub">Here's a quick summary of your energy account.</p>
+
+      <div class="kpi-grid">
+        <div class="kpi">
+          <div class="kpi-label">Current Tariff</div>
+          <div class="kpi-value green">{{ customer?.tariff?.name ?? '—' }}</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">Latest Elec Reading</div>
+          <div class="kpi-value">{{ latestElec | number:'1.0-0' }} kWh</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">Latest Gas Reading</div>
+          <div class="kpi-value">{{ latestGas | number:'1.0-0' }} kWh</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">Total Billed</div>
+          <div class="kpi-value">£{{ totalBilled | number:'1.2-2' }}</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">Unpaid Bills</div>
+          <div class="kpi-value" [class.red]="unpaidCount > 0">{{ unpaidCount }}</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">Usage Records</div>
+          <div class="kpi-value">{{ usageRecords.length }}</div>
+        </div>
+      </div>
+
+      <div class="account-card">
+        <h3>Account Details</h3>
+        <div class="detail-row"><span>Name</span><b>{{ customer?.firstName }} {{ customer?.lastName }}</b></div>
+        <div class="detail-row"><span>Email</span><b>{{ customer?.email }}</b></div>
+        <div class="detail-row"><span>Phone</span><b>{{ customer?.phone || '—' }}</b></div>
+        <div class="detail-row"><span>Address</span><b>{{ customer?.address || '—' }}</b></div>
+        <div class="detail-row"><span>Postcode</span><b>{{ customer?.postcode }}</b></div>
+      </div>
+      </ng-container>
+    </div>
+
+    <!-- USAGE TAB -->
+    <div *ngIf="activeTab === 'usage'">
+      <div class="tab-header">
+        <div>
+          <h1>Energy Usage</h1>
+          <p class="page-sub">Your meter reading history</p>
+        </div>
+        <button class="add-btn" (click)="showUsageForm = !showUsageForm">
+          {{ showUsageForm ? 'Cancel' : '+ Add Reading' }}
+        </button>
+      </div>
+
+      <!-- Add reading form -->
+      <div class="form-card" *ngIf="showUsageForm">
+        <h3>Submit Meter Reading</h3>
+        <div class="error-msg" *ngIf="usageError">{{ usageError }}</div>
+
+        <div class="form-grid">
+          <div class="field">
+            <label>Date</label>
+            <input type="date" [(ngModel)]="newDate" />
+          </div>
+          <div class="field">
+            <label>Electricity Reading (kWh)</label>
+            <input type="number" [(ngModel)]="newElec" min="0" placeholder="e.g. 15420" />
+          </div>
+          <div class="field">
+            <label>Gas Reading (kWh)</label>
+            <input type="number" [(ngModel)]="newGas" min="0" placeholder="e.g. 8310" />
+          </div>
+        </div>
+        <button class="save-btn" (click)="addUsage()" [disabled]="savingUsage">
+          {{ savingUsage ? 'Saving…' : 'Save Reading' }}
+        </button>
+      </div>
+
+      <div *ngIf="loadingUsage" class="loading-msg">Loading readings…</div>
+
+      <div class="table-wrap" *ngIf="!loadingUsage && usageRecords.length > 0">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Electricity (kWh)</th>
+              <th>Gas (kWh)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let r of usageRecords; trackBy: trackById">
+              <td>{{ r.date | date:'dd MMM yyyy' }}</td>
+              <td>{{ r.electricityReading | number:'1.0-2' }}</td>
+              <td>{{ r.gasReading | number:'1.0-2' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="empty-state" *ngIf="!loadingUsage && usageRecords.length === 0">
+        <p>No meter readings yet. Add your first reading above.</p>
+      </div>
+    </div>
+
+    <!-- BILLING TAB -->
+    <div *ngIf="activeTab === 'billing'">
+      <h1>Billing</h1>
+      <p class="page-sub">Your estimated monthly bills based on usage</p>
+
+      <div *ngIf="loadingBilling" class="loading-msg">Loading bills…</div>
+
+      <div class="table-wrap" *ngIf="!loadingBilling && billingRecords.length > 0">
+        <table>
+          <thead>
+            <tr>
+              <th>Bill Date</th>
+              <th>Amount</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let b of billingRecords; trackBy: trackById">
+              <td>{{ b.billDate | date:'MMMM yyyy' }}</td>
+              <td>£{{ b.amount | number:'1.2-2' }}</td>
+              <td><span class="status-badge" [class]="billStatusClass(b.status)">{{ b.status }}</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="empty-state" *ngIf="!loadingBilling && billingRecords.length === 0">
+        <p>No bills yet. Bills are auto-generated when you submit meter readings.</p>
+      </div>
+    </div>
+
+    <!-- TARIFF TAB -->
+    <div *ngIf="activeTab === 'tariff'">
+      <h1>My Tariff</h1>
+      <p class="page-sub">Your current energy tariff details</p>
+
+      <div class="tariff-card" *ngIf="customer?.tariff">
+        <div class="tariff-name">{{ customer!.tariff!.name }}</div>
+
+        <div class="rates-grid">
+          <div class="rate-box">
+            <div class="rate-label">Electricity Unit Rate</div>
+            <div class="rate-value">{{ (customer!.tariff!.elecUnitRate * 100).toFixed(2) }}p/kWh</div>
+          </div>
+          <div class="rate-box">
+            <div class="rate-label">Electricity Standing Charge</div>
+            <div class="rate-value">{{ (customer!.tariff!.elecStandingCharge * 100).toFixed(2) }}p/day</div>
+          </div>
+          <div class="rate-box">
+            <div class="rate-label">Gas Unit Rate</div>
+            <div class="rate-value">{{ (customer!.tariff!.gasUnitRate * 100).toFixed(2) }}p/kWh</div>
+          </div>
+          <div class="rate-box">
+            <div class="rate-label">Gas Standing Charge</div>
+            <div class="rate-value">{{ (customer!.tariff!.gasStandingCharge * 100).toFixed(2) }}p/day</div>
+          </div>
+        </div>
+
+        <p class="tariff-note">
+          To switch tariff, please contact EcoWatt customer support or use our quote tool.
+        </p>
+      </div>
+    </div>
+
+  </main>
+</div>

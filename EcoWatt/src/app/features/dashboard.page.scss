@@ -1,0 +1,331 @@
+// ===== SKELETON LOADING =====
+@keyframes shimmer {
+  0%   { background-position: -600px 0; }
+  100% { background-position:  600px 0; }
+}
+%skeleton {
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 600px 100%;
+  animation: shimmer 1.4s infinite linear;
+  border-radius: 8px;
+}
+.skeleton-title {
+  @extend %skeleton;
+  height: 32px; width: 55%; margin-bottom: 10px;
+}
+.skeleton-sub {
+  @extend %skeleton;
+  height: 16px; width: 35%; margin-bottom: 28px;
+}
+.skeleton-kpi {
+  @extend %skeleton;
+  height: 88px;
+}
+
+// ===== HEADER =====
+.dash-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 24px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.brand { font-weight: 900; font-size: 18px; color: #16a34a; }
+.header-right { display: flex; align-items: center; gap: 14px; }
+.welcome { font-size: 14px; color: #475569; font-weight: 600; }
+.logout-btn {
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  &:hover { background: #f1f5f9; }
+}
+
+// ===== LAYOUT =====
+.dash-layout {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  min-height: calc(100vh - 57px);
+}
+@media (max-width: 768px) {
+  .dash-layout { grid-template-columns: 1fr; }
+  .sidebar { display: flex; flex-direction: row; overflow-x: auto; }
+}
+
+// ===== SIDEBAR =====
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #e5e7eb;
+  padding: 16px 12px;
+  background: #f9fafb;
+  gap: 6px;
+
+  button {
+    text-align: left;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    font-weight: 600;
+    color: #475569;
+    cursor: pointer;
+    white-space: nowrap;
+
+    &:hover { background: #e5e7eb; }
+    &.active { background: #dcfce7; color: #15803d; }
+  }
+}
+
+// ===== MAIN =====
+.main {
+  padding: 28px 32px;
+  @media (max-width: 768px) { padding: 20px 16px; }
+
+  h1 {
+    font-size: 28px;
+    font-weight: 800;
+    margin: 0 0 4px;
+    letter-spacing: -0.02em;
+  }
+
+  .page-sub {
+    color: #64748b;
+    font-size: 15px;
+    margin: 0 0 24px;
+  }
+}
+
+// ===== KPI GRID =====
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 28px;
+  @media (max-width: 900px) { grid-template-columns: 1fr 1fr; }
+  @media (max-width: 500px) { grid-template-columns: 1fr; }
+}
+
+.kpi {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 20px;
+}
+.kpi-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #94a3b8;
+  margin-bottom: 8px;
+  letter-spacing: 0.05em;
+}
+.kpi-value {
+  font-size: 26px;
+  font-weight: 800;
+  color: #0f172a;
+  &.green { color: #16a34a; }
+  &.red { color: #dc2626; }
+}
+
+// ===== ACCOUNT CARD =====
+.account-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 22px;
+
+  h3 { margin: 0 0 16px; font-size: 16px; }
+}
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 14px;
+  &:last-child { border-bottom: none; }
+
+  span { color: #64748b; }
+  b { font-weight: 700; color: #0f172a; }
+}
+
+// ===== TAB HEADER =====
+.tab-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+// ===== FORM CARD =====
+.form-card {
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 22px;
+  margin-bottom: 24px;
+
+  h3 { margin: 0 0 16px; font-size: 16px; }
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 16px;
+  @media (max-width: 700px) { grid-template-columns: 1fr; }
+}
+
+.field {
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  input, select {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+    outline: none;
+    font-size: 14px;
+    box-sizing: border-box;
+    &:focus { border-color: #16a34a; }
+  }
+}
+
+.error-msg {
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  color: #dc2626;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 13px;
+  margin-bottom: 14px;
+}
+
+.save-btn, .add-btn {
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: none;
+  background: #16a34a;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 14px;
+  &:hover:not(:disabled) { background: #15803d; }
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+}
+
+.add-btn {
+  background: #16a34a;
+  white-space: nowrap;
+}
+
+// ===== TABLE =====
+.table-wrap {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  overflow: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+thead tr { background: #f8fafc; }
+th {
+  text-align: left;
+  padding: 12px 16px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #64748b;
+  border-bottom: 1px solid #e5e7eb;
+}
+td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #0f172a;
+}
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: #f9fafb; }
+
+// ===== STATUS BADGE =====
+.status-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+
+  &.paid { background: #dcfce7; color: #15803d; }
+  &.unpaid { background: #fff7ed; color: #c2410c; }
+  &.overdue { background: #fef2f2; color: #b91c1c; }
+}
+
+// ===== TARIFF CARD =====
+.tariff-card {
+  background: #fff;
+  border: 2px solid #16a34a;
+  border-radius: 16px;
+  padding: 28px;
+  max-width: 640px;
+  box-shadow: 0 0 0 4px #dcfce7;
+}
+.tariff-name { font-size: 24px; font-weight: 800; color: #15803d; margin-bottom: 22px; }
+
+.rates-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 20px;
+  @media (max-width: 500px) { grid-template-columns: 1fr; }
+}
+.rate-box {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 12px;
+  padding: 16px;
+}
+.rate-label { font-size: 12px; font-weight: 600; color: #64748b; margin-bottom: 6px; }
+.rate-value { font-size: 20px; font-weight: 800; color: #15803d; }
+
+.tariff-note { font-size: 13px; color: #64748b; }
+
+// ===== STATES =====
+.loading-msg { padding: 32px; text-align: center; color: #64748b; }
+
+.empty-state {
+  text-align: center;
+  padding: 48px 24px;
+  color: #94a3b8;
+  font-size: 15px;
+}
+
+.full-load {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: calc(100vh - 57px);
+  font-size: 18px;
+  color: #64748b;
+}

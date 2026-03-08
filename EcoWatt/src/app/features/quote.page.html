@@ -10,16 +10,135 @@
   </p>
 
   <div class="quoteBox">
-    <div class="row">
-      <input class="input" placeholder="Enter your postcode (e.g., SW1A 1AA)" />
-      <button class="btn">Get My Quote</button>
+    <div class="inputs">
+      <input class="input" [(ngModel)]="postcode" placeholder="Postcode (e.g. SW1A 1AA)"
+        (keydown.enter)="getQuote()" />
+      <div class="usage-row">
+        <div class="usage-field">
+          <label>Monthly Electricity (kWh)</label>
+          <input type="number" class="input" [(ngModel)]="monthlyElec" min="0" placeholder="e.g. 200" />
+        </div>
+        <div class="usage-field">
+          <label>Monthly Gas (kWh)</label>
+          <input type="number" class="input" [(ngModel)]="monthlyGas" min="0" placeholder="e.g. 120" />
+        </div>
+      </div>
+      <button class="btn" (click)="getQuote()" [disabled]="loading">
+        {{ loading ? 'Getting quotes…' : 'Get My Quote →' }}
+      </button>
     </div>
+
+    <div class="error-msg" *ngIf="error">{{ error }}</div>
 
     <div class="mini">
       ✓ Free quote in 30 seconds · ✓ No obligation · ✓ Compare all tariffs
     </div>
   </div>
 </section>
+
+<!-- Quote Results -->
+<section class="results" id="results-section" *ngIf="showResults && results.length">
+  <h2>Your Personalised Quotes</h2>
+  <p class="sub">Based on <strong>{{ postcode.toUpperCase() }}</strong> · Elec: <strong>{{ monthlyElec }} kWh/mo</strong> · Gas: <strong>{{ monthlyGas }} kWh/mo</strong></p>
+
+  <div class="results-grid">
+    <div class="result-card" *ngFor="let r of results; let i = index" [class.best]="i === bestIdx">
+      <div class="badge" *ngIf="i === bestIdx">★ Best Value</div>
+      <h3>{{ r.tariffName }}</h3>
+
+      <div class="cost-block">
+        <div class="amount">£{{ r.estimatedMonthlyAmount.toFixed(2) }}</div>
+        <div class="per">/ month</div>
+      </div>
+      <div class="annual">£{{ r.estimatedAnnualAmount.toFixed(2) }} / year</div>
+
+      <button class="select-btn" (click)="selectTariff(r.tariffId)">
+        Select {{ r.tariffName }}
+      </button>
+    </div>
+  </div>
+
+  <p class="results-note">Ready to switch? Click a tariff above to create your account.</p>
+</section>
+
+<section class="why">
+  <h2>Why Choose EcoWatt?</h2>
+
+  <div class="cards">
+    <div class="card">
+      <div class="icon">📈</div>
+      <h3>Transparent Pricing</h3>
+      <p>No hidden fees or surprises. See exactly what you'll pay before you switch.</p>
+    </div>
+
+    <div class="card">
+      <div class="icon">✅</div>
+      <h3>100% Renewable</h3>
+      <p>All our energy comes from renewable sources. Good for you, great for the planet.</p>
+    </div>
+
+    <div class="card">
+      <div class="icon">🛡️</div>
+      <h3>No Exit Fees</h3>
+      <p>Switch with confidence. Leave anytime with zero penalties or exit fees.</p>
+    </div>
+  </div>
+</section>
+<div class="stats">
+  <div class="stat">
+    <div class="big">50,000+</div>
+    <div class="small">Happy Customers</div>
+  </div>
+
+  <div class="stat">
+    <div class="big">4.8★</div>
+    <div class="small">Trustpilot Rating</div>
+  </div>
+
+  <div class="stat">
+    <div class="big">£240</div>
+    <div class="small">Average Yearly Savings</div>
+  </div>
+
+  <div class="stat">
+    <div class="big">24/7</div>
+    <div class="small">Customer Support</div>
+  </div>
+</div>
+<footer class="footer">
+  <div class="footerGrid">
+    <div class="footerAbout">
+      <div class="footerBrand">⚡ EcoWatt Energy</div>
+      <p>
+        Powering a sustainable future with transparent, affordable energy and simple switching.
+      </p>
+    </div>
+
+    <div class="footerCol">
+      <h4>Services</h4>
+      <a routerLink="/quote">Get Quote</a>
+      <a routerLink="/tariffs">Tariffs</a>
+      <a routerLink="/login">Customer Login</a>
+    </div>
+
+    <div class="footerCol">
+      <h4>Company</h4>
+      <a href="#">About Us</a>
+      <a href="#">Contact</a>
+      <a href="#">Careers</a>
+    </div>
+
+    <div class="footerCol">
+      <h4>Legal</h4>
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+      <a href="#">Cookie Policy</a>
+    </div>
+  </div>
+
+  <div class="copy">© 2026 EcoWatt Energy. All rights reserved.</div>
+</footer>
+
 <section class="why">
   <h2>Why Choose EcoWatt?</h2>
 

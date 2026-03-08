@@ -1,13 +1,26 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/enviroment';
+
+export interface Tariff {
+  tariffId: number;
+  name: string;
+  elecUnitRate: number;
+  elecStandingCharge: number;
+  gasUnitRate: number;
+  gasStandingCharge: number;
+}
 
 @Injectable({ providedIn: 'root' })
 export class TariffApi {
   private http = inject(HttpClient);
-
-  private baseUrl = 'http://localhost:5171'; // <-- change to your backend URL/port
+  private base = environment.apiUrl;
 
   getAll() {
-    return this.http.get<any[]>(`${this.baseUrl}/api/tariffs`);
+    return this.http.get<Tariff[]>(`${this.base}/api/tariffs`);
+  }
+
+  getById(id: number) {
+    return this.http.get<Tariff>(`${this.base}/api/tariffs/${id}`);
   }
 }

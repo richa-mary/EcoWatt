@@ -1,39 +1,119 @@
-<section class="wrap">
-  <h1>Your Personalised Tariff Options</h1>
-  <p class="sub">Based on your estimated usage (we’ll capture this next).</p>
+﻿<div class="tariffs-page">
 
-  <div class="grid" *ngIf="!loading && !error">
-    <div class="card" *ngFor="let t of tariffs; let i = index" [class.best]="i === 1">
-      <div class="badge" *ngIf="i === 1">★ Best Value</div>
-
-      <div class="icon">{{ i === 0 ? '📅' : (i === 1 ? '🛡️' : '📈') }}</div>
-
-      <h2>{{ t.name }}</h2>
-      <p class="term">{{ i === 0 ? '12 months' : (i === 1 ? '24 months' : 'Rolling monthly') }}</p>
-
-      <div class="price">
-        <div class="amount">£—</div>
-        <div class="per">per month</div>
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-inner">
+      <div class="hero-icon">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+        </svg>
       </div>
+      <h1>Your Personalized Tariff Options</h1>
+      <p class="hero-sub">Based on your estimated usage of <strong>{{ totalKwh }} kWh/month</strong></p>
 
-      <div class="meta">
-        <div><span>Elec unit:</span><b>{{ t.elecUnitRate }}</b></div>
-        <div><span>Elec standing:</span><b>{{ t.elecStandingCharge }}</b></div>
-        <div><span>Gas unit:</span><b>{{ t.gasUnitRate }}</b></div>
-        <div><span>Gas standing:</span><b>{{ t.gasStandingCharge }}</b></div>
+      <!-- Usage inputs -->
+      <div class="usage-inputs">
+        <div class="usage-field">
+          <label>Monthly Electricity</label>
+          <div class="usage-input-wrap">
+            <input type="number" [(ngModel)]="monthlyElec" min="0" placeholder="200" />
+            <span class="unit">kWh</span>
+          </div>
+        </div>
+        <div class="usage-field">
+          <label>Monthly Gas</label>
+          <div class="usage-input-wrap">
+            <input type="number" [(ngModel)]="monthlyGas" min="0" placeholder="120" />
+            <span class="unit">kWh</span>
+          </div>
+        </div>
       </div>
-
-      <ul class="ticks">
-        <li>Transparent pricing</li>
-        <li>No exit fees</li>
-        <li>Renewable options</li>
-        <li>Great support</li>
-      </ul>
-
-      <button class="select" (click)="selectTariff(t)">Select {{ t.name }}</button>
     </div>
   </div>
 
-  <p *ngIf="loading">Loading…</p>
-  <p *ngIf="error">{{ error }}</p>
-</section>
+  <!-- Loading -->
+  <div class="state-msg" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Loading tariffs...</p>
+  </div>
+
+  <!-- Error -->
+  <div class="state-msg error" *ngIf="error && !loading">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+    </svg>
+    <p>{{ error }}</p>
+  </div>
+
+  <!-- Cards -->
+  <div class="cards-section" *ngIf="!loading && !error">
+    <div class="cards-grid">
+      <div
+        class="card"
+        *ngFor="let t of tariffs"
+        [class.card--best]="t.tariffId === bestTariffId()">
+
+        <!-- Best value ribbon -->
+        <div class="ribbon" *ngIf="t.tariffId === bestTariffId()">
+          <span>⭐ Best Value</span>
+        </div>
+
+        <!-- Green icon -->
+        <div class="card-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+          </svg>
+        </div>
+
+        <!-- Name + duration -->
+        <h3 class="card-name">{{ t.name }}</h3>
+        <span class="card-duration">{{ contractLength(t) }}</span>
+
+        <!-- Price -->
+        <div class="card-price">
+          <span class="price-amount">£{{ estimatedMonthly(t) | number:'1.2-2' }}</span>
+          <span class="price-label">per month</span>
+        </div>
+
+        <!-- Rate summary -->
+        <div class="rate-row">
+          <span class="rate-label">Unit rate:</span>
+          <span class="rate-value">{{ (t.elecUnitRate * 100).toFixed(2) }}p/kWh</span>
+        </div>
+        <div class="rate-row">
+          <span class="rate-label">Standing charge:</span>
+          <span class="rate-value">£{{ (t.elecStandingCharge * 30).toFixed(0) }}/mo</span>
+        </div>
+
+        <!-- Features -->
+        <ul class="features">
+          <li *ngFor="let f of features(t)">
+            <span class="check">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+            </span>
+            {{ f }}
+          </li>
+        </ul>
+
+        <!-- CTA -->
+        <button class="select-btn" [class.select-btn--best]="t.tariffId === bestTariffId()" (click)="selectTariff(t)">
+          Select {{ t.name }}
+          <span *ngIf="t.tariffId === bestTariffId()" class="btn-star">⭐ Best Value</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- Footer note -->
+    <div class="footer-note">
+      <p>All tariffs include <strong>100% renewable energy</strong> from wind and solar sources.</p>
+      <p>No hidden fees. No exit penalties. Switch with confidence.</p>
+    </div>
+  </div>
+
+</div>

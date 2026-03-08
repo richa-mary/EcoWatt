@@ -10,9 +10,9 @@ namespace EcoWattAPI.Services
         public TariffService(EcoWattContext context) => _context = context;
 
         public async Task<List<Tariff>> GetAllAsync(CancellationToken ct = default) =>
-            await _context.Tariffs.ToListAsync(ct);
+            await _context.Tariffs.AsNoTracking().ToListAsync(ct);
 
         public async Task<Tariff?> GetByIdAsync(int id, CancellationToken ct = default) =>
-            await _context.Tariffs.FindAsync(new object[] { id }, ct);
+            await _context.Tariffs.AsNoTracking().FirstOrDefaultAsync(t => t.TariffId == id, ct);
     }
 }

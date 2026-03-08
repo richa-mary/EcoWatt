@@ -30,6 +30,10 @@ namespace EcoWattAPI.Models
 
         public Tariff Tariff { get; set; }    // Navigation property
 
+        // Auth fields
+        public string? PasswordHash { get; set; }
+        public string? PasswordSalt { get; set; }
+
         // Navigation collections
         public ICollection<Usage> Usages { get; set; } = new List<Usage>();
         public ICollection<Billing> Billings { get; set; } = new List<Billing>();

@@ -1,0 +1,57 @@
+<div class="topbar">
+  <a routerLink="/quote" class="back">Back to Home</a>
+</div>
+
+<section class="wrap">
+  <div class="card">
+    <div class="logo">EcoWatt</div>
+    <h1>Create your account</h1>
+    <p class="sub">Join thousands of customers saving money on their energy bills.</p>
+
+    <div class="error-msg" *ngIf="error">{{ error }}</div>
+
+    <div class="row">
+      <div class="field">
+        <label>First name *</label>
+        <input [(ngModel)]="firstName" placeholder="Jane" [disabled]="loading" />
+      </div>
+      <div class="field">
+        <label>Last name *</label>
+        <input [(ngModel)]="lastName" placeholder="Smith" [disabled]="loading" />
+      </div>
+    </div>
+
+    <label>Email address *</label>
+    <input type="email" [(ngModel)]="email" placeholder="jane@example.com" [disabled]="loading" />
+
+    <label>Postcode *</label>
+    <input [(ngModel)]="postcode" placeholder="e.g. SW1A 1AA" [disabled]="loading" />
+
+    <label>Phone (optional)</label>
+    <input [(ngModel)]="phone" placeholder="07700 900000" [disabled]="loading" />
+
+    <label>Address (optional)</label>
+    <input [(ngModel)]="address" placeholder="123 Green Lane" [disabled]="loading" />
+
+    <label>Tariff *</label>
+    <select [(ngModel)]="selectedTariffId" [disabled]="loading || tariffs.length === 0">
+      <option *ngFor="let t of tariffs" [value]="t.tariffId">{{ t.name }}</option>
+      <option *ngIf="tariffs.length === 0" [value]="1">Loading tariffs...</option>
+    </select>
+
+    <label>Password *</label>
+    <input type="password" [(ngModel)]="password" placeholder="At least 8 characters" [disabled]="loading" />
+
+    <label>Confirm password *</label>
+    <input type="password" [(ngModel)]="confirmPassword" placeholder="Repeat your password" [disabled]="loading"
+      (keydown.enter)="register()" />
+
+    <button (click)="register()" [disabled]="loading">
+      {{ loading ? 'Creating account…' : 'Create account' }}
+    </button>
+
+    <p class="bottom">
+      Already have an account? <a routerLink="/login">Log in</a>
+    </p>
+  </div>
+</section>

@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using EcoWattAPI.Data;
 using EcoWattAPI.Models;
 
@@ -7,9 +8,15 @@ namespace EcoWattAPI.Services
     public class QuoteService : IQuoteService
     {
         private readonly EcoWattContext _context;
+        private readonly IMemoryCache _cache;
         private const decimal DaysInMonthEstimate = 30m;
+        private const string TariffsCacheKey = "all_tariffs_rates";
 
-        public QuoteService(EcoWattContext context) => _context = context;
+        public QuoteService(EcoWattContext context, IMemoryCache cache)
+        {
+            _context = context;
+            _cache = cache;
+        }
 
         public async Task<QuoteResult?> CalculateQuoteForCustomerAsync(
             int customerId,
@@ -80,6 +87,38 @@ namespace EcoWattAPI.Services
             if (tariff == null) return null;
 
             return CalculateForTariff(tariff, monthlyElectricity, monthlyGas);
+        }
+
+        public async Task<List<QuoteResult>> GetAllTariffQuotesAsync(
+            decimal monthlyElectricity,
+            decimal monthlyGas,
+            CancellationToken ct = default)
+        {
+            var tariffs = await GetCachedTariffsAsync(ct);
+            return tariffs.Select(t => CalculateForTariff(t, monthlyElectricity, monthlyGas)).ToList();
+        }
+
+        // Fetch only the rate fields; cache for 5 minutes — tariffs rarely change
+        private async Task<List<Tariff>> GetCachedTariffsAsync(CancellationToken ct)
+        {
+            if (_cache.TryGetValue(TariffsCacheKey, out List<Tariff>? cached) && cached != null)
+                return cached;
+
+            var tariffs = await _context.Tariffs
+                .AsNoTracking()
+                .Select(t => new Tariff
+                {
+                    TariffId           = t.TariffId,
+                    Name               = t.Name,
+                    ElecUnitRate       = t.ElecUnitRate,
+                    ElecStandingCharge = t.ElecStandingCharge,
+                    GasUnitRate        = t.GasUnitRate,
+                    GasStandingCharge  = t.GasStandingCharge
+                })
+                .ToListAsync(ct);
+
+            _cache.Set(TariffsCacheKey, tariffs, TimeSpan.FromMinutes(5));
+            return tariffs;
         }
 
         private QuoteResult CalculateForTariff(Tariff tariff, decimal monthlyElectricity, decimal monthlyGas)

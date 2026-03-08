@@ -26,11 +26,32 @@ namespace EcoWattAPI.Controllers
 
         // GET: api/customers/5
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<Customer>> GetCustomer(int id, CancellationToken ct)
+        public async Task<ActionResult> GetCustomer(int id, CancellationToken ct)
         {
             var customer = await _customerService.GetByIdAsync(id, ct);
             if (customer == null) return NotFound(new { message = "Customer not found" });
-            return Ok(customer);
+
+            // Return a clean DTO — no password fields, no circular navigation
+            return Ok(new
+            {
+                customer.CustomerId,
+                customer.FirstName,
+                customer.LastName,
+                customer.Email,
+                customer.Phone,
+                customer.Address,
+                customer.Postcode,
+                customer.TariffId,
+                Tariff = customer.Tariff == null ? null : new
+                {
+                    customer.Tariff.TariffId,
+                    customer.Tariff.Name,
+                    customer.Tariff.ElecUnitRate,
+                    customer.Tariff.ElecStandingCharge,
+                    customer.Tariff.GasUnitRate,
+                    customer.Tariff.GasStandingCharge
+                }
+            });
         }
 
         // POST: api/customers
